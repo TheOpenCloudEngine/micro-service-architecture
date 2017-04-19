@@ -77,6 +77,11 @@
        }.bind(this));
     },
 
+    _ready: function(){
+      this.dbname = "forcs_db";
+      this.remote = "http://iam.uengine.io:5984";
+    },
+
     close: function(destroy) {
       if (this._db) {
         if (destroy) {
