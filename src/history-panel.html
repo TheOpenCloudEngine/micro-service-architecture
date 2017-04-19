@@ -1,0 +1,224 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<!--<link rel="import" href="../bower_components/vaadin-charts/vaadin-bar-chart.html">-->
+<!--<link rel="import" href="../bower_components/vaadin-charts/vaadin-column-chart.html">-->
+<link rel="import" href="moment-js.html">
+
+<dom-module id="history-panel">
+  <template>
+    <style>
+      :host {
+        display: block;
+        background: #f8f9f9;
+        padding: 20px 24px;
+      }
+
+      #container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chart-title {
+        @apply(--section-title);
+      }
+
+      #barchart::content text {
+        font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+
+      #horizontal {
+        display: none;
+      }
+
+      @media (max-width: 600px) {
+        .chart,
+        #horizontal {
+          display: none;
+        }
+        .total {
+          height: 64px;
+          -ms-flex-direction: row;
+          -webkit-flex-direction: row;
+          flex-direction: row;
+        }
+        .total .sum {
+          margin-left: 12px;
+        }
+      }
+
+      @media (max-width: 1124px) {
+        #horizontal {
+          display: flex;
+        }
+        .chart-title {
+          display: none;
+        }
+        #horizontal .chart-title {
+          display: block;
+          width: 450px;
+        }
+        #total > span:first-child {
+          @apply(--section-title);
+        }
+        #total {
+          flex: 1;
+          margin-left: 16px;
+        }
+        #total .sum {
+          display: block;
+          text-align: center;
+          font-weight: 200;
+          font-size: 32px;
+          line-height: 100px;
+        }
+        #barchart {
+          display: none;
+        }
+      }
+
+      @media (min-width: 1125px) {
+        .chart-title {
+          margin-top: 200px;
+        }
+      }
+    </style>
+    <div id="container">
+
+      <!--<div class="chart">-->
+        <!--<h2 class="chart-title section-title">Last 12 Months in Total</h2>-->
+        <!--<vaadin-bar-chart id="barchart">-->
+          <!--<title>-->
+            <!--<style display="none"></style>-->
+          <!--</title>-->
+          <!--<chart background-color="transparent" height="400" width="250"></chart>-->
+          <!--<exporting enabled="false"></exporting>-->
+          <!--<x-axis>-->
+            <!--<title>-->
+              <!--<style display="none"></style>-->
+            <!--</title>-->
+            <!--<labels>-->
+              <!--<chart-style>{"color": "#000"}</chart-style>-->
+            <!--</labels>-->
+          <!--</x-axis>-->
+          <!--<y-axis>-->
+            <!--<title>-->
+              <!--<style display="none"></style>-->
+            <!--</title>-->
+          <!--</y-axis>-->
+          <!--<tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>-->
+          <!--<data-series name="$" data="[[seriesData]]">-->
+            <!--<color>#ffc13f</color>-->
+          <!--</data-series>-->
+          <!--<legend enabled="false"></legend>-->
+        <!--</vaadin-bar-chart>-->
+
+        <div id="horizontal">
+          <div>
+            <h2 class="chart-title section-title">Last 12 Months in Total</h2>
+            <!--<vaadin-column-chart id="columnchart">-->
+              <!--<title>-->
+                <!--<style display="none"></style>-->
+              <!--</title>-->
+              <!--<chart background-color="transparent" height="200" width="450"></chart>-->
+              <!--<exporting enabled="false"></exporting>-->
+              <!--<x-axis>-->
+                <!--<title>-->
+                  <!--<style display="none"></style>-->
+                <!--</title>-->
+                <!--<labels>-->
+                  <!--<chart-style>{"color": "#000"}</chart-style>-->
+                <!--</labels>-->
+              <!--</x-axis>-->
+              <!--<y-axis>-->
+                <!--<title>-->
+                  <!--<style display="none"></style>-->
+                <!--</title>-->
+              <!--</y-axis>-->
+              <!--<tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>-->
+              <!--<data-series name="$" data="[[seriesData]]">-->
+                <!--<color>#ffc13f</color>-->
+              <!--</data-series>-->
+              <!--<legend enabled="false"></legend>-->
+            <!--</vaadin-column-chart>-->
+          </div>
+          <div id="total">
+            <span>문서 가격 총액</span>
+            <span class="sum">[[totalOwed]]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+      Polymer({
+        is: 'history-panel',
+
+        properties: {
+          expenses: Array,
+          seriesData: {
+            type: Array,
+            notify: true
+          }
+        },
+
+        observers: [
+          'update(expenses.*)'
+        ],
+
+        update: function() {
+          var expenses = this.expenses;
+
+          function findMonth(rawDate, history) {
+            var date = moment(rawDate);
+            var month;
+
+            history.forEach(function(m) {
+              if (m.month === date.month() && m.year === date.year()) {
+                month = m;
+              }
+            });
+
+            if (!month) {
+              month = {
+                month: date.month(),
+                year: date.year(),
+                total: 0
+              };
+              history.push(month);
+            }
+            return month;
+          }
+
+          function getHistoryLabel(item, index) {
+            var label = moment().year(item.year).month(item.month);
+            var format = (index === 0 || item.month === 11) ? 'YYYY MMM' : 'MMM';
+            return label.format(format);
+          }
+
+          var history = [];
+          var oneYearAgo = moment().subtract(1, 'years');
+
+          expenses.filter(function(expense) {
+            return moment(expense.date).isAfter(oneYearAgo);
+          }).forEach(function(expense) {
+            findMonth(expense.date, history).total += expense.total;
+          });
+
+          this.seriesData = history.map(function(month) {
+            return month.total;
+          });
+
+          this.async(function() {
+            this.$.barchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
+            this.$.barchart.chart.reflow();
+            this.$.columnchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
+            this.$.columnchart.chart.reflow();
+          }, 50);
+
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

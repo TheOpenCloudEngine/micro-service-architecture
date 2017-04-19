@@ -1,0 +1,302 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="moment-js.html">
+
+<dom-module id="expenses-list">
+  <template>
+    <style>
+      :host {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+      }
+
+      #add-button {
+        position: absolute;
+        right: 32px;
+        bottom: 32px;
+        z-index: 2;
+      }
+
+      @media (max-width: 1124px) {
+        #add-button {
+          bottom: -28px;
+        }
+      }
+
+      @media (min-width: 1125px) {
+        #add-button {
+          bottom: auto;
+          top: -29px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        #add-button {
+          bottom: 32px;
+        }
+      }
+
+      #expenses {
+        flex: 1;
+        color: var(--primary-text-color);
+      }
+
+      @media (max-width: 1124px) {
+        #expenses {
+          font-size: 15px;
+        }
+      }
+
+      #expenses /deep/ thead.vaadin-grid-header {
+        box-shadow: 0 -9px 2px 10px rgba(0, 0, 0, 0.1), 0 -8px 3px 10px rgba(204, 204, 204, 0.20);
+      }
+
+      #expenses /deep/ thead.vaadin-grid-header th {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary-text-color);
+      }
+
+      vaadin-grid /deep/ .total {
+        flex-direction: row-reverse;
+      }
+
+      vaadin-grid /deep/ td.status-new {
+        color: var(--accent-color);
+        font-weight: 500;
+      }
+
+      vaadin-grid /deep/ td.status-in_progress {
+        font-weight: 500;
+        font-style: italic;
+        text-transform: capitalize;
+      }
+
+      vaadin-grid /deep/ td.comment {
+        position: relative;
+      }
+
+      vaadin-grid /deep/ td.comment span {
+        width: 100%;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        padding-right: 35px;
+        box-sizing: border-box;
+      }
+
+      #expenses /deep/ .vaadin-grid-header [class*="sort-"]:after {
+        content: "";
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent;
+        width: 0;
+        padding: 0;
+        min-width: 0;
+        margin: 0 10px;
+      }
+
+      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-desc.vaadin-grid:after {
+        border-top-color: var(--accent-color);
+        transform: translateY(25%);
+      }
+
+      #expenses /deep/ .vaadin-grid-header.vaadin-grid .sort-asc.vaadin-grid:after {
+        border-bottom-color: var(--accent-color);
+        transform: translateY(-25%);
+      }
+    </style>
+
+
+    <vaadin-grid id="expenses" frozen-columns="1">
+      <table>
+        <colgroup>
+          <col name="comment" flex="2" min-width="260" sortable/>
+          <col name="date" width="120" sortable sort-direction="desc" />
+          <col name="merchant" flex="1" min-width="145" sortable/>
+          <col name="total" width="90" sortable/>
+          <col name="status" width="120" sortable/>
+        </colgroup>
+
+        <thead>
+          <tr>
+            <th>문서명</th>
+            <th>등록일</th>
+            <th>문서유형</th>
+            <th>문서가격</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+      </table>
+    </vaadin-grid>
+    <paper-fab icon="add" on-tap="_showExpenseEditor" id="add-button"></paper-fab>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'expenses-list',
+
+        properties: {
+          expenses: Array,
+          sortColumn: String,
+          sortDirection: String,
+          filters: Object
+        },
+
+        observers: [
+          '_update(filters, expenses)',
+          '_filtersChanged(filters.*)',
+          '_update(expenses.*)',
+          '_update(sortColumn)',
+          '_update(sortDirection)'
+        ],
+
+        ready: function() {
+          var grid = this.$.expenses;
+
+          grid.addEventListener('sort-order-changed', function() {
+            if (grid.size > 0) {
+              grid.scrollToStart();
+              this._update();
+            }
+          }.bind(this));
+
+          grid.addEventListener('selected-items-changed', function() {
+            var selection = grid.selection.selected();
+            if (selection.length === 1) {
+              grid.getItem(selection[0], function(err, item) {
+                this.fire('edit-expense', item);
+              }.bind(this));
+            }
+          }.bind(this));
+
+          grid.cellClassGenerator = function(cell) {
+            if (cell.columnName === 'status') {
+              return 'status-' + cell.data.replace(/ /g, '-').toLowerCase();
+            } else if (cell.columnName === 'total') {
+              return 'total';
+            } else if (cell.columnName === 'comment') {
+              return 'comment';
+            }
+          };
+
+          grid.then(function() {
+            grid.columns[1].renderer = function(cell) {
+              cell.element.innerHTML = moment(cell.data).format('MM/DD/YYYY');
+            };
+            grid.columns[3].renderer = function(cell) {
+              cell.element.innerHTML = cell.data.toFixed(2) + '원';
+            };
+            grid.columns[4].renderer = function(cell) {
+              var status = cell.data.replace(/_/g, ' ');
+              status = status.charAt(0).toUpperCase() + status.slice(1);
+              cell.element.textContent = status;
+            };
+
+            grid.header.getCell(0, 2).className = 'total';
+          });
+        },
+
+        _showExpenseEditor: function() {
+          this.fire('edit-expense', {});
+        },
+
+        _filtersChanged: function() {
+          if (this.$.expenses.items) {
+            this.debounce('_filtersChanged', function() {
+              this._update();
+            }, 300);
+          }
+        },
+
+        _update: function() {
+          if (!this.filters) {
+            return;
+          }
+          var grid = this.$.expenses;
+          var merchant = this.filters.merchant;
+          var min = this.filters.min;
+          var max = this.filters.max;
+          var status = this.filters.status;
+          var start = this.filters.start;
+          var end = this.filters.end;
+          var sort;
+          var direction;
+          if (grid.sortOrder && grid.sortOrder[0]) {
+            sort = grid.columns[grid.sortOrder[0].column].name;
+            direction = grid.sortOrder[0].direction;
+          }
+
+          // Filter
+          var result = this.expenses
+            .filter(function(expense) {
+              return !(merchant && expense.merchant
+                .toUpperCase().indexOf(merchant.toUpperCase()) < 0);
+            })
+            .filter(function(expense) {
+              return !(min && expense.total < min);
+            })
+            .filter(function(expense) {
+              return !(max && expense.total > max);
+            })
+            .filter(function(expense) {
+              if (status && status.length > 0) {
+                return status.indexOf(expense.status) >= 0;
+              } else {
+                return false;
+              }
+            })
+            .filter(function(expense) {
+              if (start) {
+                var startDate = moment(start);
+                return !!(startDate.isValid() && moment(expense.date).isAfter(startDate));
+              } else {
+                return true;
+              }
+            })
+            .filter(function(expense) {
+              if (end) {
+                var endDate = moment(end);
+                return !!(endDate.isValid() && moment(expense.date).isBefore(endDate));
+              } else {
+                return true;
+              }
+            });
+
+          // Sort
+          if (sort) {
+            var sortProperty = sort;
+            var sortDirection = direction || 'desc';
+            var datePattern = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
+            result.sort(function(a, b) {
+              var res;
+              if (!isNaN(a[sortProperty])) {
+                res = parseInt(a[sortProperty], 10) - parseInt(b[sortProperty], 10);
+              } else if (datePattern.test(a[sortProperty])) {
+                // Sort dates with moment.js.
+                res = moment(a[sortProperty]).isBefore(moment(b[sortProperty])) ? 1 : -1;
+              } else {
+                // Let's pretend everything that's not a number or date is a string.
+                res = a[sortProperty].localeCompare(b[sortProperty]);
+              }
+
+              if ('desc' === sortDirection) {
+                res *= -1;
+              }
+              return res;
+            });
+          }
+
+          grid.items = result;
+        }
+      });
+    })();
+  </script>
+</dom-module>

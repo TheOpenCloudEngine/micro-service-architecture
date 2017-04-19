@@ -1,0 +1,12 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/expense-app.html",
+  "includeDependencies": [
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js",
+    "images/*",
+    "manifest.json"
+  ],
+  "fragments": [
+    "src/overview-page.html"
+  ]
+}

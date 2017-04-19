@@ -1,0 +1,27 @@
+{
+  "name": "vaadin-pouchdb",
+  "homepage": "https://github.com/manolo/vaadin-pouchdb",
+  "main": "vaadin-pouchdb.html",
+  "authors": [
+    "Manolo Carrasco Moñino"
+  ],
+  "license": "Apache",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "pouchdb": "^5.3.1",
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "_release": "70964982b6",
+  "_resolution": {
+    "type": "branch",
+    "branch": "em",
+    "commit": "70964982b6dfd66f92cdd8e25f42f3e2db4b89ba"
+  },
+  "_source": "https://github.com/manolo/vaadin-pouchdb.git",
+  "_target": "em",
+  "_originalSource": "manolo/vaadin-pouchdb"
+}
