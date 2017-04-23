@@ -39,12 +39,12 @@ The demo uses [Vaadin Charts](https://vaadin.com/charts), which will ask for a l
 ### 연동 서버 리스트
 
 - 마이크로 서비스 아키텍쳐 제품군
-    - [IAM](http://iam.uengine.io:8080) support@iam.co.kr / admin
-    - [API GateWay](http://gw.uengine.io/service-console) support@iam.co.kr / admin
-    - [Billing](http://billing.uengine.io/) sppark2 / gosu23546
+    - [IAM](http://iam.uengine.io:8080) 아이디/비번 "support@iam.co.kr/admin"
+    - [API GateWay](http://gw.uengine.io/service-console) 아이디/비번 "support@iam.co.kr/admin"
+    - [Billing](http://billing.uengine.io/) 아이디/비번 "sppark2/gosu23546"
 
 - 서비스 리소스
-    - [Coucbdb](http://iam.uengine.io:5984/_utils/fauxton) admin / admin
+    - [Coucbdb](http://iam.uengine.io:5984/_utils/fauxton) 아이디/비번 "admin/admin"
     
 ### 연동 동영상
 
