@@ -32,3 +32,28 @@ You can build the app with `polymer build`. Other options are listed in the [Pol
 
 ## Note
 The demo uses [Vaadin Charts](https://vaadin.com/charts), which will ask for a license. You can close the window to try out the app without a license.
+
+
+## 마이크로 서비스 아키텍쳐 연동 데모설정
+
+### 연동 서버 리스트
+
+- 마이크로 서비스 아키텍쳐 제품군
+    - [IAM](http://iam.uengine.io:8080) support@iam.co.kr / admin
+    - [API GateWay](http://gw.uengine.io/service-console) support@iam.co.kr / admin
+    - [Billing](http://billing.uengine.io/) sppark2 / gosu23546
+
+- 서비스 리소스
+    - [Coucbdb](http://iam.uengine.io:5984/_utils/fauxton) admin / admin
+    
+### 연동 동영상
+
+- [빌링서비스 설정](https://youtu.be/PL9F7S6sG1A)
+
+- [IAM 통합아이디 설정](https://youtu.be/eobfHgLBGAQ)
+
+- [API Gateway 설정](https://youtu.be/SQYoAHll_ok)
+
+- [Expanse manager 앱 설정](https://youtu.be/izc_c1N3xkw)
+
+

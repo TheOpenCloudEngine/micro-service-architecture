@@ -130,8 +130,8 @@
 
             var me = this;
             var iam = new IAM('http://iam.uengine.io:8080');
-            iam.setDefaultClient('e74a9505-a811-407f-b4f6-129b7af1c703','109cf590-ac67-4b8c-912a-913373ada046');
-            iam.passwordCredentialsLogin(this.username,this.password,'uEngineSubscriptions/subscriptionsapi','JWT')
+            iam.setDefaultClient('9e8b3697-0d87-4587-a170-f522ea0ad68f','991bec96-5f7e-4e88-9190-b4e5a3fa991d');
+            iam.passwordCredentialsLogin(this.username,this.password,'uengine/databaseApi','JWT')
               .done(function(response){
                 console.log(response);
                 me.loggedIn = true;
