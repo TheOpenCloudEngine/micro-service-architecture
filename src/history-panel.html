@@ -83,62 +83,10 @@
     </style>
     <div id="container">
 
-      <!--<div class="chart">-->
-        <!--<h2 class="chart-title section-title">Last 12 Months in Total</h2>-->
-        <!--<vaadin-bar-chart id="barchart">-->
-          <!--<title>-->
-            <!--<style display="none"></style>-->
-          <!--</title>-->
-          <!--<chart background-color="transparent" height="400" width="250"></chart>-->
-          <!--<exporting enabled="false"></exporting>-->
-          <!--<x-axis>-->
-            <!--<title>-->
-              <!--<style display="none"></style>-->
-            <!--</title>-->
-            <!--<labels>-->
-              <!--<chart-style>{"color": "#000"}</chart-style>-->
-            <!--</labels>-->
-          <!--</x-axis>-->
-          <!--<y-axis>-->
-            <!--<title>-->
-              <!--<style display="none"></style>-->
-            <!--</title>-->
-          <!--</y-axis>-->
-          <!--<tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>-->
-          <!--<data-series name="$" data="[[seriesData]]">-->
-            <!--<color>#ffc13f</color>-->
-          <!--</data-series>-->
-          <!--<legend enabled="false"></legend>-->
-        <!--</vaadin-bar-chart>-->
-
         <div id="horizontal">
           <div>
             <h2 class="chart-title section-title">Last 12 Months in Total</h2>
-            <!--<vaadin-column-chart id="columnchart">-->
-              <!--<title>-->
-                <!--<style display="none"></style>-->
-              <!--</title>-->
-              <!--<chart background-color="transparent" height="200" width="450"></chart>-->
-              <!--<exporting enabled="false"></exporting>-->
-              <!--<x-axis>-->
-                <!--<title>-->
-                  <!--<style display="none"></style>-->
-                <!--</title>-->
-                <!--<labels>-->
-                  <!--<chart-style>{"color": "#000"}</chart-style>-->
-                <!--</labels>-->
-              <!--</x-axis>-->
-              <!--<y-axis>-->
-                <!--<title>-->
-                  <!--<style display="none"></style>-->
-                <!--</title>-->
-              <!--</y-axis>-->
-              <!--<tooltip formatter="function() { return '$' + this.y.toFixed(2); }"></tooltip>-->
-              <!--<data-series name="$" data="[[seriesData]]">-->
-                <!--<color>#ffc13f</color>-->
-              <!--</data-series>-->
-              <!--<legend enabled="false"></legend>-->
-            <!--</vaadin-column-chart>-->
+
           </div>
           <div id="total">
             <span>문서 가격 총액</span>
@@ -208,13 +156,6 @@
           this.seriesData = history.map(function(month) {
             return month.total;
           });
-
-          this.async(function() {
-            this.$.barchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
-            this.$.barchart.chart.reflow();
-            this.$.columnchart.chart.xAxis[0].setCategories(history.map(getHistoryLabel));
-            this.$.columnchart.chart.reflow();
-          }, 50);
 
         }
 
