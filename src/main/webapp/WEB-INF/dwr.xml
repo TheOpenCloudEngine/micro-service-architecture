@@ -1,0 +1,22 @@
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://getahead.org/dwr/dwr30.dtd">
+<dwr>
+	<init>
+		<converter id="metaworks" class="org.metaworks.dwr.MetaworksConverter" />
+	</init>
+
+	<allow>
+		<create creator="spring" javascript="Metaworks" scope="page">
+			<param name="beanName" value="MetaworksRemoteService" />
+		</create>
+
+		<convert converter="bean" match="org.metaworks.dwr.*" />
+		
+		<convert converter="metaworks" match="java.lang.Class" />
+		<convert converter="metaworks" match="java.lang.Object" />
+		
+		
+		<convert match="java.lang.Exception" converter="exception">
+			<param name='include' value='message,lineNumber' />
+		</convert>
+	</allow>
+</dwr>
