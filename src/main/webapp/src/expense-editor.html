@@ -174,8 +174,9 @@
         <paper-icon-button icon="close" on-tap="close" class="close-button self-start"></paper-icon-button>
       </div>
 
+
       <div class="wrapper">
-        <div class="form">
+        <div class="form" id="expense-form">
           <form is="iron-form" id="form">
             <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
             <vaadin-combo-box name="merchant" id="merchant" items="[[merchants]]" value="{{expense.merchant}}" label="문서유형" allow-custom-value required></vaadin-combo-box>
@@ -235,7 +236,8 @@
             value: 'images/default-receipt.png'
           },
           route: Object,
-          routeData: Object
+          routeData: Object,
+            extFieldLoaded: Boolean
         },
 
         observers: ['_updateReceiptURL(expense._attachments.*)'],
@@ -264,9 +266,9 @@
 
         _getCaption: function(expense) {
           if (expense._id) {
-            return '문서편집';
+            return '편집';
           } else {
-            return '문서추가';
+            return '추가';
           }
         },
 
@@ -382,6 +384,19 @@
 
         open: function(expense) {
 
+          if(!this.extFieldLoaded) {
+              var link = document.createElement('link');
+              link.setAttribute('rel', 'import');
+              var tenant = localStorage['tenant'];
+              link.setAttribute('href', 'dynamicForm.jsp?className=org.uengine.' + tenant + 'Expense&extendedFieldsOnly=true');
+              document.body.appendChild(link);
+
+              var elem = document.createElement("org-uengine-" + tenant + "Expense");
+              this.$$(".form").appendChild(elem);
+
+              this.extFieldLoaded = true;
+          }
+
           // Create a copy of the expense to be edited so we don't automatically flush changes to db
           this.expense = JSON.parse(JSON.stringify(expense));
           // File objects don't survive the JSON dance, so copy that over manually
@@ -407,6 +422,8 @@
           });
 
           this.set('route.path', '/edit');
+
+
         },
 
         close: function() {

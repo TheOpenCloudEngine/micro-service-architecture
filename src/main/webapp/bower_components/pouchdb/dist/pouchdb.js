@@ -1376,7 +1376,7 @@ Dual licensed under the MIT and GPL licenses.
  *   >>> Math.uuid(15)     // 15 character ID (default base=62)
  *   "VcydxgltxrVZSTV"
  *
- *   // Two arguments - returns ID of the specified length, and radix.
+ *   // Two arguments - returns ID of the specified length, and radix. 
  *   // (Radix must be <= 62)
  *   >>> Math.uuid(8, 2)  // 8 character ID (base=2)
  *   "01001010"
@@ -7550,11 +7550,6 @@ function xhRequest(options, callback) {
   }
 
   try {
-      if(options.url.indexOf('?') > 0){
-          options.url = options.url + '&Authentication=' + window.localStorage.getItem('uengine-iam-access-token');
-      }else{
-          options.url = options.url + '?Authentication=' + window.localStorage.getItem('uengine-iam-access-token');
-      }
     xhr.open(options.method, options.url);
   } catch (exception) {
     return callback(new Error(exception.name || 'Url is invalid'));
@@ -7562,7 +7557,6 @@ function xhRequest(options, callback) {
 
   xhr.withCredentials = ('withCredentials' in options) ?
     options.withCredentials : true;
-
 
   if (options.method === 'GET') {
     delete options.headers['Content-Type'];
@@ -11832,7 +11826,7 @@ if (typeof Object.create === 'function') {
 }
 
 },{}],10:[function(_dereq_,module,exports){
-(function() {
+(function() { 
 
   var slice   = Array.prototype.slice,
       each    = Array.prototype.forEach;
@@ -11840,7 +11834,7 @@ if (typeof Object.create === 'function') {
   var extend = function(obj) {
     if(typeof obj !== 'object') throw obj + ' is not an object' ;
 
-    var sources = slice.call(arguments, 1);
+    var sources = slice.call(arguments, 1); 
 
     each.call(sources, function(source) {
       if(source) {
@@ -11850,7 +11844,7 @@ if (typeof Object.create === 'function') {
           } else {
             obj[prop] = source[prop];
           }
-        }
+        } 
       }
     });
 
@@ -12247,7 +12241,7 @@ function plural(ms, n, name) {
 
 var MIN_MAGNITUDE = -324; // verified by -Number.MIN_VALUE
 var MAGNITUDE_DIGITS = 3; // ditto
-var SEP = ''; // set to '_' for easier debugging
+var SEP = ''; // set to '_' for easier debugging 
 
 var utils = _dereq_(14);
 
