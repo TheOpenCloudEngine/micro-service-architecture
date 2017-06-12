@@ -27,8 +27,8 @@ var IAM = function (host, contextPath) {
       xhr.setRequestHeader('management-secret', managementSecret);
     }
     if (clientKey && clientSecret) {
-      xhr.setRequestHeader('client-key', managementKey);
-      xhr.setRequestHeader('client-secret', managementSecret);
+      xhr.setRequestHeader('client-key', clientKey);
+      xhr.setRequestHeader('client-secret', clientSecret);
     }
   });
 };
